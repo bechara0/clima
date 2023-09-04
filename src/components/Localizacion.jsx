@@ -28,12 +28,32 @@ const Boton = styled.button`
   box-shadow: 2px 2px 6px yellow;
 `;
 
-const Localizacion = ({ setBusqueda, busqueda }) => {
-  
+const Localizacion = () => {
+  const [busqueda, setBusqueda] = useState("");
+  const [objetoBusqueda, setObjetoBusqueda] = useState({});
+  const [coordenadas, setCordenadas] = useState({});
+  const [conClick, setConClick] = useState(false);
+
+  useEffect(() => {
+    if (conClick) {
+      const cordenadas = async () => {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${objetoBusqueda},AR&appid=67197d23e283bc5da4164ae2b8af7f12`;
+        console.log(url);
+        const search = await fetch(url);
+        const resultado = await search.json();
+        setCordenadas(resultado);
+        setConClick(false);
+      };
+      cordenadas();
+    }
+  }, [conClick]);
+  console.log("las coordenadas:", coordenadas);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log(busqueda);
+    setObjetoBusqueda(busqueda);
+    setConClick(true);
+    console.log("busqueda", objetoBusqueda);
   };
 
   return (
@@ -43,13 +63,10 @@ const Localizacion = ({ setBusqueda, busqueda }) => {
           type="text"
           placeholder="Ingrese Localización"
           onChange={(e) => setBusqueda(e.target.value)}
+          value={busqueda}
         />
-        <Boton>
-          <Imagen
-            src={buscar}
-            alt="imagen de buscador"
-            onClick={handleSearch}
-          />
+        <Boton onClick={handleSearch}>
+          <Imagen src={buscar} alt="imagen de buscador" />
         </Boton>
       </Form>
     </>
