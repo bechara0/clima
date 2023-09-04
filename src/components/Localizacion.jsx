@@ -28,32 +28,37 @@ const Boton = styled.button`
   box-shadow: 2px 2px 6px yellow;
 `;
 
-const Localizacion = () => {
+const Localizacion = ({
+  objetoBusqueda,
+  setObjetoBusqueda,
+  conClick,
+  setConClick,
+  setCordenadas,
+}) => {
   const [busqueda, setBusqueda] = useState("");
-  const [objetoBusqueda, setObjetoBusqueda] = useState({});
-  const [coordenadas, setCordenadas] = useState({});
-  const [conClick, setConClick] = useState(false);
+  
 
   useEffect(() => {
     if (conClick) {
       const cordenadas = async () => {
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${objetoBusqueda},AR&appid=67197d23e283bc5da4164ae2b8af7f12`;
-        console.log(url);
         const search = await fetch(url);
         const resultado = await search.json();
-        setCordenadas(resultado);
+        const objectoCoordenadas = {
+          lat: resultado.coord.lat,
+          lon: resultado.coord.lon,
+        };
+        setCordenadas(objectoCoordenadas);
         setConClick(false);
       };
       cordenadas();
     }
   }, [conClick]);
-  console.log("las coordenadas:", coordenadas);
 
   const handleSearch = (e) => {
     e.preventDefault();
     setObjetoBusqueda(busqueda);
     setConClick(true);
-    console.log("busqueda", objetoBusqueda);
   };
 
   return (
