@@ -30,7 +30,7 @@ const Header = () => {
     <Contenedor>
       <Imagen src={desierto} alt="imagen desierto" />
       <Parrafo>
-        JuanJo <Span>Forecast</Span>
+        JuanJo <Span>Weather Forecast</Span>
       </Parrafo>
     </Contenedor>
   );
