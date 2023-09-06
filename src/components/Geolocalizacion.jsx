@@ -2,14 +2,12 @@ import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 import buscar from "../img/buscar.png";
 import Infoclima from "./Infoclima";
-import Lugares from "./Lugares";
 
 const Form = styled.form`
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 15px;
-  margin-bottom: 30px;
 `;
 
 const Input = styled.input`
@@ -17,7 +15,6 @@ const Input = styled.input`
   height: 27px;
   border-radius: 7px;
   box-shadow: 2px 2px 6px yellow;
-  margin-left: 20px;
 `;
 
 const Imagen = styled.img`
@@ -26,32 +23,26 @@ const Imagen = styled.img`
 `;
 
 const Boton = styled.button`
-  margin: 0 20px;
+  margin-left: 20px;
   cursor: pointer;
   border-radius: 10px;
   box-shadow: 2px 2px 6px yellow;
 `;
-const Parrafo2 = styled.p`
-  margin: 15px;
-  text-align: left;
+
+const ContenedorInicial = styled.div`
+  display: flex;
+  flex-direction: column;
   color: white;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
 `;
 
-const Localizacion = ({
-  objetoBusqueda,
-  setObjetoBusqueda,
-  conClick,
-  setConClick,
-  resultadoClima,
-  setResultadoClima,
-  setCordenadas,
-  cordenadas,
-  
-}) => {
+const Geolocalizacion = (resultadoClima, setResultadoClima) => {
   const [busqueda, setBusqueda] = useState("");
+
+  //   const [coordenadas, setCordenadas] = useState({});
 
   useEffect(() => {
     if (conClick) {
@@ -60,31 +51,36 @@ const Localizacion = ({
         const url = `https://us1.locationiq.com/v1/search?key=${key}&q=${objetoBusqueda}&format=json`;
         const search = await fetch(url);
         const resultado = await search.json();
-        setCordenadas(resultado);
+        console.log("resultado geolocalizacion-->,", resultado);
+        // const objectoCoordenadas = {
+        //   lat: resultado.coord.lat,
+        //   lon: resultado.coord.lon,
+        //   name: resultado.name,
+        //   temp: resultado.main.temp,
+        //   humidity: resultado.main.humidity,
+        // };
+        // setCordenadas(objectoCoordenadas);
         setConClick(false);
-        console.log("resultado geolocalizacion-->,", cordenadas);
       };
       datosCordenadas();
     }
   }, [conClick]);
 
   //   useEffect(() => {
-  //     console.log(cordenadas);
+  //     console.log(coordenadas);
   //     const datosClima = async () => {
-  //       const url =
-  //         "https://api.openweathermap.org/data/2.5/weather?id=2172127&appid=67197d23e283bc5da4164ae2b8af7f12";
-  //       const url2 = `https://api.openweathermap.org/data/2.5/weather?lat=${cordenadas.lat}&lon=${cordenadas.lon}&units=metric&appid=67197d23e283bc5da4164ae2b8af7f12`;
-  //       const search2 = await fetch(url);
+  //       const url2 = `https://api.openweathermap.org/data/2.5/weather?lat=${coordenadas.lat}&lon=${coordenadas.lon}&units=metric&appid=67197d23e283bc5da4164ae2b8af7f12`;
+  //       const search2 = await fetch(url2);
   //       const climaFinal = await search2.json();
-  //       setResultadoClima("clima", climaFinal);
-  //       // console.log("datos del clima: ", resultadoClima);
+  //       setResultadoClima(climaFinal);
+  //       console.log("datos del clima: ", resultadoClima);
 
   //       setCordenadas({});
   //     };
-  //     if (cordenadas.length > 0) {
+  //     if (coordenadas.length > 0) {
   //       datosClima();
   //     }
-  //   }, [cordenadas]);
+  //   }, [coordenadas]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -97,7 +93,7 @@ const Localizacion = ({
       <Form>
         <Input
           type="text"
-          placeholder="Ingrese Localidad"
+          placeholder="Ingrese Localización"
           onChange={(e) => setBusqueda(e.target.value)}
           value={busqueda}
         />
@@ -105,23 +101,15 @@ const Localizacion = ({
           <Imagen src={buscar} alt="imagen de buscador" />
         </Boton>
       </Form>
-      {cordenadas.length > 0 ? (
-        cordenadas.map((lugar) => (
-          <Lugares
-            key={lugar.place_id}
-            lugar={lugar}
-        
-            resultadoClima={resultadoClima}
-            setResultadoClima={setResultadoClima}
-          />
-        ))
-      ) : (
-        <Parrafo2>Esperando resultados de búsqueda</Parrafo2>
-      )}
+      {/* <ContenedorInicial>
+        <p>Lugar: {coordenadas.name}</p>
+        <p>Temperatura: {coordenadas.temp}</p>
+        <p>Humedad: {coordenadas.humidity}</p>
+      </ContenedorInicial>
 
-      <Infoclima resultadoClima={resultadoClima} />
+      <Infoclima resultadoClima={resultadoClima} /> */}
     </>
   );
 };
 
-export default Localizacion;
+export default Geolocalizacion;

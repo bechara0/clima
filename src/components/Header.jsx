@@ -5,8 +5,11 @@ const Contenedor = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin: 10px;
   max-height: 300px;
+  @media (max-width: 650px) {
+    flex-direction: column;
+  }
 `;
 
 const Parrafo = styled.p`
