@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
 import buscar from "../img/buscar.png";
 import Infoclima from "./Infoclima";
-import Lugares from "./Lugares";
 
 const Form = styled.form`
   display: flex;
@@ -10,6 +9,9 @@ const Form = styled.form`
   align-items: center;
   margin-top: 15px;
   margin-bottom: 30px;
+  @media (max-width: 680px) {
+    flex-direction: column;
+  }
 `;
 
 const Input = styled.input`
@@ -18,6 +20,7 @@ const Input = styled.input`
   border-radius: 7px;
   box-shadow: 2px 2px 6px yellow;
   margin-left: 20px;
+  margin-bottom: 15px;
 `;
 
 const Imagen = styled.img`
@@ -47,48 +50,34 @@ const Localizacion = ({
   setConClick,
   resultadoClima,
   setResultadoClima,
-  setCordenadas,
-  cordenadas,
-  
 }) => {
-  const [busqueda, setBusqueda] = useState("");
+  const [busquedaCiudad, setBusquedaCiudad] = useState("");
+  const [busquedaProvincia, setBusquedaProvincia] = useState("");
+  const [busquedaPais, setBusquedaPais] = useState("");
 
   useEffect(() => {
     if (conClick) {
-      const datosCordenadas = async () => {
-        const key = "pk.04fe38e2ef3a2de1d40ac18a97d949f4";
-        const url = `https://us1.locationiq.com/v1/search?key=${key}&q=${objetoBusqueda}&format=json`;
+      const datosClima = async () => {
+        const key = "5c59d5f1a31e4dd6b8d154149230609";
+        const url = `https://api.weatherapi.com/v1/forecast.json?key=${key}&q=${objetoBusqueda.ciudad},${objetoBusqueda.provincia},${objetoBusqueda.pais}&lang=es`;
         const search = await fetch(url);
         const resultado = await search.json();
-        setCordenadas(resultado);
+        setResultadoClima(resultado);
         setConClick(false);
-        console.log("resultado geolocalizacion-->,", cordenadas);
       };
-      datosCordenadas();
+      datosClima();
     }
   }, [conClick]);
 
-  //   useEffect(() => {
-  //     console.log(cordenadas);
-  //     const datosClima = async () => {
-  //       const url =
-  //         "https://api.openweathermap.org/data/2.5/weather?id=2172127&appid=67197d23e283bc5da4164ae2b8af7f12";
-  //       const url2 = `https://api.openweathermap.org/data/2.5/weather?lat=${cordenadas.lat}&lon=${cordenadas.lon}&units=metric&appid=67197d23e283bc5da4164ae2b8af7f12`;
-  //       const search2 = await fetch(url);
-  //       const climaFinal = await search2.json();
-  //       setResultadoClima("clima", climaFinal);
-  //       // console.log("datos del clima: ", resultadoClima);
-
-  //       setCordenadas({});
-  //     };
-  //     if (cordenadas.length > 0) {
-  //       datosClima();
-  //     }
-  //   }, [cordenadas]);
-
   const handleSearch = (e) => {
     e.preventDefault();
-    setObjetoBusqueda(busqueda);
+    const parametrosLocalidad = {
+      ciudad: busquedaCiudad,
+      provincia: busquedaProvincia,
+      pais: busquedaPais,
+    };
+    setObjetoBusqueda(parametrosLocalidad);
+    console.log("parametros: ", parametrosLocalidad);
     setConClick(true);
   };
 
@@ -98,28 +87,30 @@ const Localizacion = ({
         <Input
           type="text"
           placeholder="Ingrese Localidad"
-          onChange={(e) => setBusqueda(e.target.value)}
-          value={busqueda}
+          onChange={(e) => setBusquedaCiudad(e.target.value)}
+          value={busquedaCiudad}
+        />
+        <Input
+          type="text"
+          placeholder="Ingrese Provincia"
+          onChange={(e) => setBusquedaProvincia(e.target.value)}
+          value={busquedaProvincia}
+        />
+        <Input
+          type="text"
+          placeholder="Ingrese País (opcional)"
+          onChange={(e) => setBusquedaPais(e.target.value)}
+          value={busquedaPais}
         />
         <Boton onClick={handleSearch}>
           <Imagen src={buscar} alt="imagen de buscador" />
         </Boton>
       </Form>
-      {cordenadas.length > 0 ? (
-        cordenadas.map((lugar) => (
-          <Lugares
-            key={lugar.place_id}
-            lugar={lugar}
-        
-            resultadoClima={resultadoClima}
-            setResultadoClima={setResultadoClima}
-          />
-        ))
+      {Object.keys(resultadoClima).length > 0 ? (
+        <Infoclima resultadoClima={resultadoClima} />
       ) : (
         <Parrafo2>Esperando resultados de búsqueda</Parrafo2>
       )}
-
-      <Infoclima resultadoClima={resultadoClima} />
     </>
   );
 };
