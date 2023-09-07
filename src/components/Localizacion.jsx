@@ -62,7 +62,14 @@ const Localizacion = ({
         const url = `https://api.weatherapi.com/v1/forecast.json?key=${key}&q=${objetoBusqueda.ciudad},${objetoBusqueda.provincia},${objetoBusqueda.pais}&lang=es`;
         const search = await fetch(url);
         const resultado = await search.json();
-        setResultadoClima(resultado);
+        if (search.status === 200) {
+          setResultadoClima(resultado);
+        } else {
+          alert("Datos ingresados incorrectos o incompletos");
+          setResultadoClima({});
+          setConClick(false);
+        }
+
         setConClick(false);
       };
       datosClima();
@@ -79,6 +86,9 @@ const Localizacion = ({
     setObjetoBusqueda(parametrosLocalidad);
     console.log("parametros: ", parametrosLocalidad);
     setConClick(true);
+    setBusquedaCiudad("");
+    setBusquedaPais("");
+    setBusquedaProvincia("");
   };
 
   return (
